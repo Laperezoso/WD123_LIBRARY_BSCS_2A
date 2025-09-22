@@ -15,6 +15,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
    
     if(empty($book["title"])){
         $errors["title"] = "Title is required";
+    }elseif($bookObj->isBookExist($book["title"])){
+        $errors["title"] = "title name already exist";
     }
     if(empty($book["author"])){
         $errors["author"] = "Author is required";
@@ -84,7 +86,5 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <input type="submit" value="Save Book">
     </form>
 
-    <br>
-    <a href="viewbook.php">View All Books</a>
 </body>
 </html>
