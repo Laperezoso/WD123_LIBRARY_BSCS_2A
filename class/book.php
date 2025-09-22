@@ -27,9 +27,10 @@ class Book {
         return $query->execute();
     }
 
-    public function viewBook(){
-        $sql = "SELECT * FROM book ORDER BY title ASC";
+    public function viewBook($search = ""){
+        $sql = "SELECT * FROM book WHERE title LIKE CONCAT('%', :search, '%') ORDER BY title ASC";
         $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(":search", $search);
 
         if($query->execute()){
             return $query->fetchAll();
@@ -37,5 +38,20 @@ class Book {
             return null;
         }
     }
+
+     public function isBookExist($title){
+        $sql = "SELECT COUNT(*) as total FROM book WHERE title = :title";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(":title", $title);
+        $record = null;
+        if ($query->execute()) {
+            $record = $query->fetch();
+        }
+
+        if($record["total"] > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
-?>
