@@ -3,65 +3,74 @@ require_once "../class/book.php";
 $bookObj = new Book();
 
 $search = "";
+$genre = "";
 
 if($_SERVER["REQUEST_METHOD"] == "GET"){
-    $search = isset($_GET["search"])? trim(htmlspecialchars($_GET["search"])) : "";
+    $search = isset($_GET["search"]) ? trim(htmlspecialchars($_GET["search"])) : "";
+    $genre = isset($_GET["genre"]) ? trim(htmlspecialchars($_GET["genre"])) : "";
 }
-
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Books</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Book</title>
+
 </head>
 <body>
-    <h1>List of Books</h1>
-     <form action="" method="get">
-        <label for="">Search:</label>
-        <input type="search" name="search" id="search" value="<?= $search ?>">
-        <input type="submit" value="Search">
-    </form>
-    <button><a href="addbook.php"> Add New Book</a></button>
-    <br><br>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>No.</th>
-            <th>Book Name</th>
-            <th>Author</th>
-            <th>Publication Year</th>
-            <th>Genre</th>
-        </tr>
-        <?php
-        $no = 1;
-
-        foreach($bookObj->viewBook($search) as $book){
-        ?>
-        <tr>
-            <td><?= $no++ ?></td>
-            <td><?= $book["title"] ?></td>
-            <td><?= $book["author"] ?></td>
-             <td><?= $book["genre"] ?></td>
-             <td><?= $book["pub_year"] ?></td>
-        </tr>
-        <?php
-        }
-       /* $books = $bookObj->viewBook();
-        if($books){
-            foreach($books as $book){ ?>
-                <tr>
+    <div class="container">
+        <h1>VIEW BOOKS</h1>
+        <div class="search-container">
+            <form action="" method="get">
+                <label for="search">Search: </label>
+                <input type="search" name="search" id="search" value="<?= $search ?>">
+                <select name="genre" id="genre">
+                    <option value="" <?= empty($genre) ? "selected" : ""; ?>>-- Select Option --</option>
+                    <option value="History" <?= $genre == "History" ? "selected" : ""; ?>>History</option>
+                    <option value="Science" <?= $genre == "Science" ? "selected" : ""; ?>>Science</option>
+                    <option value="Fiction" <?= $genre == "Fiction" ? "selected" : ""; ?>>Fiction</option>
+                </select>
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <div class="table-container">
+            <button><a href="addBook.php">Add Book</a></button>
+            <table border="1">
+                <tr class="header">
+                    <td>id</td>
+                    <td>Title</td>
+                    <td>Author</td>
+                    <td>Genre</td>
+                    <td>Publication Year</td>
+                    <td>Actions</td>
+                </tr>
+        
+                <?php 
+                $no = 1;
+                foreach($bookObj->viewBook($genre, $search) as $book) { 
+                    $message = 'Are you sure you want to delete?';
+            
+                ?>
+                <tr class="data">
                     <td><?= $no++ ?></td>
                     <td><?= $book["title"] ?></td>
-                    <td><?= $book["author"] ?></td>
+                    <td><?= $book["author"]  ?></td>
+                    <td><?= $book["genre"]  ?></td>
                     <td><?= $book["pub_year"] ?></td>
-                    <td><?= $book["genre"] ?></td>
+                    <td style="padding: 10xp;">
+                        <button><a href="editBook.php?id=<?= $book['id'] ?>">Edit</a></button>
+                        <button><a href="deleteBook.php?id=<?= $book['id'] ?>" onClick="return confirm('<?= $message ?>')">delete</a></button>
+                    </td>
                 </tr>
-            <?php }
-        } else {
-            echo "<tr><td colspan='5'>No books found</td></tr>";
-        }*/
-        ?>
-    </table>
+                <?php
+                    
+                }
+                ?>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
